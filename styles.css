@@ -311,4 +311,17 @@ body {
 .lang-btn:hover {
     background: #e0e0e0;
     color: #764ba2;
+}
+
+.info-block {
+    background: #f3f6fd;
+    color: #3a3a3a;
+    border-left: 4px solid #667eea;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.06);
 } 

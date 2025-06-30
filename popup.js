@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             copied: 'Copied!',
             copyTitle: 'Copy link',
             footer: 'Made with ❤️ for productivity',
+            authInfo: 'To create a Meet, you must be signed in to your Google account.'
         },
         ru: {
             title: 'Meet Link Generator',
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             copied: 'Скопировано!',
             copyTitle: 'Копировать ссылку',
             footer: 'Создано с ❤️ для продуктивности',
+            authInfo: 'Для создания встречи необходимо войти в аккаунт Google.'
         }
     };
     let currentLang = 'en';
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('open-btn-text').textContent = t.open;
         document.getElementById('new-btn-text').textContent = t.new;
         document.getElementById('footer-text').textContent = t.footer;
+        document.getElementById('auth-info-text').textContent = t.authInfo;
         // Кнопки
         document.getElementById('lang-en').classList.toggle('active', lang === 'en');
         document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
