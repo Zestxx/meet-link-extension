@@ -9,8 +9,13 @@
 <body>
     <div class="container" style="width:380px;height:500px;">
         <div class="header">
-            <h1>Meet Link Generator</h1>
-            <p>Создай ссылку на встречу одним кликом</p>
+            <h1 id="title-text">Meet Link Generator</h1>
+            <p id="subtitle-text">Create a Google Meet link in one click</p>
+            <div class="lang-switcher">
+                <button id="lang-en" class="lang-btn" aria-label="English">EN</button>
+                <span style="color:#fff;opacity:0.5;">|</span>
+                <button id="lang-ru" class="lang-btn" aria-label="Русский">RU</button>
+            </div>
         </div>
         
         <div class="main-content">
@@ -18,17 +23,17 @@
                 <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
-                Создать ссылку Meet
+                <span id="generate-btn-text">Create Meet link</span>
             </button>
             
             <div id="result" class="result-container" style="display: none;">
                 <div class="result-header">
                     <span class="success-icon">✓</span>
-                    <span>Ссылка создана!</span>
+                    <span id="result-header-text">Link created!</span>
                 </div>
                 <div class="link-container">
                     <input type="text" id="meetLink" class="link-input" readonly>
-                    <button id="copyBtn" class="copy-btn" title="Копировать ссылку">
+                    <button id="copyBtn" class="copy-btn" title="Copy link">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                         </svg>
@@ -39,20 +44,20 @@
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
                         </svg>
-                        Открыть встречу
+                        <span id="open-btn-text">Open Meet</span>
                     </button>
                     <button id="newBtn" class="action-btn new-btn">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                         </svg>
-                        Новая ссылка
+                        <span id="new-btn-text">New link</span>
                     </button>
                 </div>
             </div>
         </div>
         
         <div class="footer">
-            <p>Создано с ❤️ для продуктивности</p>
+            <p id="footer-text">Made with ❤️ for productivity</p>
         </div>
     </div>
     

@@ -6,6 +6,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const openBtn = document.getElementById('openBtn');
     const newBtn = document.getElementById('newBtn');
 
+    // --- Мультиязычность ---
+    const translations = {
+        en: {
+            title: 'Meet Link Generator',
+            subtitle: 'Create a Google Meet link in one click',
+            generate: 'Create Meet link',
+            resultHeader: 'Link created!',
+            copy: 'Copy link',
+            open: 'Open Meet',
+            new: 'New link',
+            copied: 'Copied!',
+            copyTitle: 'Copy link',
+            footer: 'Made with ❤️ for productivity',
+        },
+        ru: {
+            title: 'Meet Link Generator',
+            subtitle: 'Создай ссылку на встречу одним кликом',
+            generate: 'Создать ссылку Meet',
+            resultHeader: 'Ссылка создана!',
+            copy: 'Копировать ссылку',
+            open: 'Открыть встречу',
+            new: 'Новая ссылка',
+            copied: 'Скопировано!',
+            copyTitle: 'Копировать ссылку',
+            footer: 'Создано с ❤️ для продуктивности',
+        }
+    };
+    let currentLang = 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.getElementById('title-text').textContent = t.title;
+        document.getElementById('subtitle-text').textContent = t.subtitle;
+        document.getElementById('generate-btn-text').textContent = t.generate;
+        document.getElementById('result-header-text').textContent = t.resultHeader;
+        document.getElementById('copyBtn').title = t.copyTitle;
+        document.getElementById('open-btn-text').textContent = t.open;
+        document.getElementById('new-btn-text').textContent = t.new;
+        document.getElementById('footer-text').textContent = t.footer;
+        // Кнопки
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+        document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
+    }
+
+    document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+    document.getElementById('lang-ru').addEventListener('click', () => setLang('ru'));
+
+    // Автоопределение языка браузера (en/ru)
+    const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (browserLang.startsWith('ru')) setLang('ru');
+    else setLang('en');
+
     // Генерация уникального ID для встречи
     function generateMeetId() {
         const chars = 'abcdefghijklmnopqrstuvwxyz';
@@ -69,19 +122,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Показать уведомление об успешном копировании
     function showCopySuccess() {
+        const t = translations[currentLang];
         const originalText = copyBtn.innerHTML;
         copyBtn.innerHTML = `
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
             </svg>
+            <span style='margin-left:4px;'>${t.copied}</span>
         `;
         copyBtn.style.backgroundColor = '#4CAF50';
-        copyBtn.title = 'Скопировано!';
+        copyBtn.title = t.copied;
         
         setTimeout(() => {
             copyBtn.innerHTML = originalText;
             copyBtn.style.backgroundColor = '';
-            copyBtn.title = 'Копировать ссылку';
+            copyBtn.title = t.copyTitle;
         }, 2000);
     }
 
