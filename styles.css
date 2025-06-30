@@ -51,8 +51,16 @@ body {
     align-items: center;
 }
 
+.meet-logo {
+    height: 36px;
+    margin-bottom: 8px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .generate-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #34A853;
     color: white;
     border: none;
     border-radius: 12px;
@@ -64,17 +72,19 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 24px rgba(52, 168, 83, 0.15);
     min-width: 200px;
     justify-content: center;
 }
 
 .generate-btn:hover {
+    background: #1e8e3e;
+    box-shadow: 0 12px 32px rgba(52, 168, 83, 0.22);
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
 }
 
 .generate-btn:active {
+    background: #188038;
     transform: translateY(0);
 }
 
