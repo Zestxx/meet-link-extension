@@ -1,0 +1,47 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Системные
+Thumbs.db
+Desktop.ini
+
+# Логи
+*.log
+
+# Кэш браузеров
+.cache/
+
+# Сборочные артефакты
+/dist/
+/build/
+
+# Бэкапы
+*~
+*.swp
+*.swo
+
+# Иконки, если будут генерироваться временно
+icon*.bak.png
+
+# Конфиденциальные файлы
+.env
+.env.*
+
+# Тестовые скрипты и временные файлы
+*.tmp
+*.temp 
