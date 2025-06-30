@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             copied: 'Copied!',
             copyTitle: 'Copy link',
             footer: 'Made with ❤️ for productivity',
-            authInfo: 'To create a Meet, you must be signed in to your Google account.'
+            authInfo: 'To join a Meet, you must be signed in to your Google account.'
         },
         ru: {
             title: 'Meet Link Generator',
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             copied: 'Скопировано!',
             copyTitle: 'Копировать ссылку',
             footer: 'Создано с ❤️ для продуктивности',
-            authInfo: 'Для создания встречи необходимо войти в аккаунт Google.'
+            authInfo: 'Для подключения к встрече необходимо войти в аккаунт Google.'
         }
     };
     let currentLang = 'en';

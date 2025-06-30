@@ -324,4 +324,6 @@ body {
     display: flex;
     align-items: center;
     box-shadow: 0 2px 8px rgba(102,126,234,0.06);
+    justify-content: center;
+    text-align: center;
 } 
