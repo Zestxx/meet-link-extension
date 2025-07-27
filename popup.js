@@ -20,26 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
             copyTitle: 'Copy link',
             footer: 'Made with ❤️ for productivity',
             authInfo: 'To join a Meet, you must be signed in to your Google account.'
-        },
-        ru: {
-            title: 'Meet Link Generator',
-            subtitle: 'Создай ссылку на встречу одним кликом',
-            generate: 'Создать ссылку Meet',
-            resultHeader: 'Ссылка создана!',
-            copy: 'Копировать ссылку',
-            open: 'Открыть встречу',
-            new: 'Новая ссылка',
-            copied: 'Скопировано!',
-            copyTitle: 'Копировать ссылку',
-            footer: 'Создано с ❤️ для продуктивности',
-            authInfo: 'Для подключения к встрече необходимо войти в аккаунт Google.'
         }
     };
     let currentLang = 'en';
 
     function setLang(lang) {
-        currentLang = lang;
-        const t = translations[lang];
+        const t = translations['en'];
         document.getElementById('title-text').textContent = t.title;
         document.getElementById('subtitle-text').textContent = t.subtitle;
         document.getElementById('generate-btn-text').textContent = t.generate;
@@ -49,18 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('new-btn-text').textContent = t.new;
         document.getElementById('footer-text').textContent = t.footer;
         document.getElementById('auth-info-text').textContent = t.authInfo;
-        // Кнопки
-        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-        document.getElementById('lang-ru').classList.toggle('active', lang === 'ru');
     }
 
-    document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-    document.getElementById('lang-ru').addEventListener('click', () => setLang('ru'));
-
-    // Автоопределение языка браузера (en/ru)
-    const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    if (browserLang.startsWith('ru')) setLang('ru');
-    else setLang('en');
+    setLang('en');
 
     // Генерация уникального ID для встречи
     function generateMeetId() {
@@ -125,21 +102,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Показать уведомление об успешном копировании
     function showCopySuccess() {
-        const t = translations[currentLang];
-        const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            <span style='margin-left:4px;'>${t.copied}</span>
-        `;
-        copyBtn.style.backgroundColor = '#4CAF50';
-        copyBtn.title = t.copied;
-        
+        const t = translations['en'];
+        const tooltip = document.getElementById('copy-tooltip');
+        tooltip.textContent = t.copied;
+        tooltip.classList.add('show');
+        tooltip.style.display = 'block';
         setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-            copyBtn.style.backgroundColor = '';
-            copyBtn.title = t.copyTitle;
+            tooltip.classList.remove('show');
+            setTimeout(() => { tooltip.style.display = 'none'; }, 300);
         }, 2000);
     }
 
@@ -150,8 +120,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Обработчики событий
     generateBtn.addEventListener('click', function() {
-        const link = createMeetLink();
-        showResult(link);
+        // Показываем статус загрузки
+        generateBtn.classList.add('loading');
+        generateBtn.disabled = true;
+        meetLinkInput.value = '';
+        chrome.runtime.sendMessage({ action: 'generateMeetLink' }, function(response) {
+            generateBtn.classList.remove('loading');
+            generateBtn.disabled = false;
+            if (response && response.meetLink) {
+                showResult(response.meetLink);
+                copyToClipboard(response.meetLink); // Автоматическое копирование и уведомление
+                playSuccessSound();
+            } else if (response && response.error === 'not_authenticated') {
+                showResult('Пожалуйста, авторизуйтесь в Google и повторите попытку.');
+            } else if (response && response.error === 'need_permissions') {
+                showResult('Похоже, Google Meet ожидает разрешения на доступ к камере и микрофону. Разрешите доступ в открывшейся вкладке и повторите попытку.');
+            } else {
+                showResult('Ошибка генерации ссылки');
+            }
+        });
     });
 
     copyBtn.addEventListener('click', function() {
@@ -188,12 +175,4 @@ document.addEventListener('DOMContentLoaded', function() {
         // const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
         // audio.play();
     }
-
-    // Обновляем обработчик генерации для добавления звука
-    const originalGenerateClick = generateBtn.onclick;
-    generateBtn.onclick = function() {
-        const link = createMeetLink();
-        showResult(link);
-        playSuccessSound();
-    };
 }); 

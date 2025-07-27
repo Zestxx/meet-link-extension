@@ -23,7 +23,7 @@ body {
 }
 
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(180deg, #3a3a7c 0%, #667eea 60%, #764ba2 100%);
     color: white;
     padding: 24px 20px;
     text-align: center;
@@ -49,6 +49,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .meet-logo {
@@ -125,10 +126,35 @@ body {
     font-weight: bold;
 }
 
+.copy-tooltip {
+    position: absolute;
+    left: 50%;
+    top: 16px;
+    transform: translateX(-50%) translateY(0);
+    width: max-content;
+    background: #34A853;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(52,168,83,0.12);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 20;
+}
+.copy-tooltip.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(8px);
+}
+
 .link-container {
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
+    position: relative;
 }
 
 .link-input {

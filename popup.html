@@ -12,11 +12,7 @@
             <img src="assets/meet-logo.png" alt="Google Meet" class="meet-logo" style="height:36px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;">
             <h1 id="title-text">Meet Link Generator</h1>
             <p id="subtitle-text">Create a Google Meet link in one click</p>
-            <div class="lang-switcher">
-                <button id="lang-en" class="lang-btn" aria-label="English">EN</button>
-                <span style="color:#fff;opacity:0.5;">|</span>
-                <button id="lang-ru" class="lang-btn" aria-label="Русский">RU</button>
-            </div>
+            <!-- Удалена панель выбора языка -->
         </div>
         
         <div class="info-block" id="auth-info-block">
@@ -31,7 +27,7 @@
                 </svg>
                 <span id="generate-btn-text">Create Meet link</span>
             </button>
-            
+            <div id="copy-tooltip" class="copy-tooltip" style="display:none;">Скопировано!</div>
             <div id="result" class="result-container" style="display: none;">
                 <div class="result-header">
                     <span class="success-icon">✓</span>

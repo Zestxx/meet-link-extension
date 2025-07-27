@@ -2,22 +2,32 @@
   "manifest_version": 3,
   "name": "Meet Link Generator",
   "version": "0.1.0",
-  "description": "Быстрое создание ссылок на встречи в Google Meet",
-  "permissions": ["activeTab"],
+  "description": "Fast Google Meet link generator",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://*.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Создать ссылку Meet",
+    "default_title": "Create Meet link",
     "default_icon": {
-      "16": "assets/icon16.png",
-      "32": "assets/icon32.png",
-      "48": "assets/icon48.png",
-      "128": "assets/icon128.png"
+      "16": "assets/image16.png",
+      "32": "assets/image32.png",
+      "48": "assets/image48.png",
+      "128": "assets/image128.png"
     }
   },
   "icons": {
-    "16": "assets/icon16.png",
-    "32": "assets/icon32.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
+    "16": "assets/image16.png",
+    "32": "assets/image32.png",
+    "48": "assets/image48.png",
+    "128": "assets/image128.png"
   }
-} 
+}
