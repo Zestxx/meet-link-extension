@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             cleanup();
             chrome.tabs.remove(tabId);
             sendResponse({ error: 'need_permissions' });
-          }, 10000);
+          }, 5000);
         });
       } else {
         // Нет авторизации — открываем вкладку авторизации Google

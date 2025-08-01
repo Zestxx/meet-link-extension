@@ -6,61 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const openBtn = document.getElementById('openBtn');
     const newBtn = document.getElementById('newBtn');
 
-    // --- Мультиязычность ---
-    const translations = {
-        en: {
-            title: 'Meet Link Generator',
-            subtitle: 'Create a Google Meet link in one click',
-            generate: 'Create Meet link',
-            resultHeader: 'Link created!',
-            copy: 'Copy link',
-            open: 'Open Meet',
-            new: 'New link',
-            copied: 'Copied!',
-            copyTitle: 'Copy link',
-            footer: 'Made with ❤️ for productivity',
-            authInfo: 'To join a Meet, you must be signed in to your Google account.'
-        }
-    };
-    let currentLang = 'en';
-
-    function setLang(lang) {
-        const t = translations['en'];
-        document.getElementById('title-text').textContent = t.title;
-        document.getElementById('subtitle-text').textContent = t.subtitle;
-        document.getElementById('generate-btn-text').textContent = t.generate;
-        document.getElementById('result-header-text').textContent = t.resultHeader;
-        document.getElementById('copyBtn').title = t.copyTitle;
-        document.getElementById('open-btn-text').textContent = t.open;
-        document.getElementById('new-btn-text').textContent = t.new;
-        document.getElementById('footer-text').textContent = t.footer;
-        document.getElementById('auth-info-text').textContent = t.authInfo;
-    }
-
-    setLang('en');
-
-    // Генерация уникального ID для встречи
-    function generateMeetId() {
-        const chars = 'abcdefghijklmnopqrstuvwxyz';
-        let result = '';
-        for (let i = 0; i < 3; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        result += '-';
-        for (let i = 0; i < 4; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        result += '-';
-        for (let i = 0; i < 3; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return result;
-    }
-
-    // Создание ссылки Google Meet
-    function createMeetLink() {
-        return 'https://meet.google.com/new';
-    }
 
     // Показать результат
     function showResult(link) {
@@ -102,9 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Показать уведомление об успешном копировании
     function showCopySuccess() {
-        const t = translations['en'];
         const tooltip = document.getElementById('copy-tooltip');
-        tooltip.textContent = t.copied;
+        tooltip.textContent = 'Copied!';
         tooltip.classList.add('show');
         tooltip.style.display = 'block';
         setTimeout(() => {
@@ -118,27 +62,75 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.create({ url: link });
     }
 
-    // Обработчики событий
-    generateBtn.addEventListener('click', function() {
-        // Показываем статус загрузки
-        generateBtn.classList.add('loading');
+    // Показать статус загрузки
+    function showLoading() {
+        generateBtn.textContent = 'Creating...';
         generateBtn.disabled = true;
-        meetLinkInput.value = '';
+        generateBtn.style.opacity = '0.7';
+    }
+
+    // Скрыть статус загрузки
+    function hideLoading() {
+        generateBtn.textContent = 'Generate Meet Link';
+        generateBtn.disabled = false;
+        generateBtn.style.opacity = '1';
+    }
+
+    // Главная функция генерации ссылки
+    function generateMeetLink() {
+        showLoading();
+        
         chrome.runtime.sendMessage({ action: 'generateMeetLink' }, function(response) {
-            generateBtn.classList.remove('loading');
-            generateBtn.disabled = false;
+            hideLoading();
+            
             if (response && response.meetLink) {
+                // Успешно создана ссылка - показываем результат
                 showResult(response.meetLink);
-                copyToClipboard(response.meetLink); // Автоматическое копирование и уведомление
+                copyToClipboard(response.meetLink);
                 playSuccessSound();
             } else if (response && response.error === 'not_authenticated') {
-                showResult('Пожалуйста, авторизуйтесь в Google и повторите попытку.');
+                // Нет авторизации - открываем Google авторизацию
+                chrome.tabs.create({ url: 'https://accounts.google.com/ServiceLogin?service=mail', active: true });
+                showError('Please sign in to Google and try again.');
             } else if (response && response.error === 'need_permissions') {
-                showResult('Похоже, Google Meet ожидает разрешения на доступ к камере и микрофону. Разрешите доступ в открывшейся вкладке и повторите попытку.');
+                // Нужны разрешения - показываем диалог
+                showPermissionsDialog();
             } else {
-                showResult('Ошибка генерации ссылки');
+                // Другие ошибки
+                showError('Error generating link. Please try again.');
             }
         });
+    }
+
+    // Показать ошибку
+    function showError(message) {
+        resultContainer.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #d93025;">
+                <div style="font-size: 14px; margin-bottom: 15px;">${message}</div>
+                <button id="retryBtn" class="action-btn retry-btn">Try Again</button>
+            </div>
+        `;
+        resultContainer.style.display = 'block';
+        generateBtn.style.display = 'none';
+        
+        // Анимация появления
+        resultContainer.style.opacity = '0';
+        resultContainer.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            resultContainer.style.opacity = '1';
+            resultContainer.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Обработчик кнопки повтора
+        document.getElementById('retryBtn').addEventListener('click', function() {
+            hideResult();
+        });
+    }
+
+    // Обработчики событий
+    generateBtn.addEventListener('click', function() {
+        // Сначала пытаемся создать ссылку
+        generateMeetLink();
     });
 
     copyBtn.addEventListener('click', function() {
@@ -168,6 +160,72 @@ document.addEventListener('DOMContentLoaded', function() {
     generateBtn.addEventListener('mouseleave', function() {
         this.style.transform = 'scale(1)';
     });
+
+    // Показать диалог с инструкциями по разрешениям
+    function showPermissionsDialog() {
+        const permissionsHtml = `
+            <div class="permissions-dialog">
+                <div class="permissions-header">
+                    <svg width="20" height="20" style="color: #1a73e8; margin-right: 6px;" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Setup Permissions
+                </div>
+                <div class="permissions-text">
+                    <p><b>Step 1:</b> Click "Open Google Meet" below</p>
+                    <p><b>Step 2:</b> Allow camera and microphone access</p>
+                    <p><b>Step 3:</b> Return here and click "Create Link"</p>
+                    <p style="font-size: 11px; color: #666; margin-top: 8px;">💡 Only needed once</p>
+                </div>
+                <div class="permissions-actions">
+                    <button id="openMeetBtn" class="action-btn open-meet-btn">Open Google Meet</button>
+                    <button id="createLinkBtn" class="action-btn retry-btn">Create Link</button>
+                </div>
+            </div>
+        `;
+        
+        resultContainer.innerHTML = permissionsHtml;
+        resultContainer.style.display = 'block';
+        generateBtn.style.display = 'none';
+        
+        // Анимация появления
+        resultContainer.style.opacity = '0';
+        resultContainer.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            resultContainer.style.opacity = '1';
+            resultContainer.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Обработчик кнопки "Open Google Meet"
+        document.getElementById('openMeetBtn').addEventListener('click', function() {
+            chrome.tabs.create({ url: 'https://meet.google.com/new', active: true });
+            this.textContent = '✓ Tab opened';
+            this.style.background = '#34A853';
+            this.disabled = true;
+        });
+
+        // Обработчик кнопки "Создать ссылку"
+        document.getElementById('createLinkBtn').addEventListener('click', function() {
+            // Показываем статус загрузки
+            this.classList.add('loading');
+            this.disabled = true;
+            
+            chrome.runtime.sendMessage({ action: 'generateMeetLink' }, function(response) {
+                if (response && response.meetLink) {
+                    showResult(response.meetLink);
+                    copyToClipboard(response.meetLink);
+                    playSuccessSound();
+                } else if (response && response.error === 'not_authenticated') {
+                    chrome.tabs.create({ url: 'https://accounts.google.com/ServiceLogin?service=mail', active: true });
+                    showError('Please sign in to Google and try again.');
+                } else if (response && response.error === 'need_permissions') {
+                    showError('Please allow camera and microphone access in Google Meet and try again.');
+                } else {
+                    showError('Error generating link. Please try again.');
+                }
+            });
+        });
+    }
 
     // Добавляем звуковой эффект при создании ссылки (опционально)
     function playSuccessSound() {
