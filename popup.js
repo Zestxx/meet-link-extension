@@ -102,14 +102,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Очистка старых обработчиков событий для предотвращения утечек памяти
+    function cleanupEventListeners() {
+        const existingButtons = resultContainer.querySelectorAll('button');
+        existingButtons.forEach(button => {
+            button.replaceWith(button.cloneNode(true));
+        });
+    }
+
     // Показать ошибку
     function showError(message) {
-        resultContainer.innerHTML = `
-            <div style="text-align: center; padding: 20px; color: #d93025;">
-                <div style="font-size: 14px; margin-bottom: 15px;">${message}</div>
-                <button id="retryBtn" class="action-btn retry-btn">Try Again</button>
-            </div>
-        `;
+        // Очищаем контейнер и старые обработчики безопасно
+        cleanupEventListeners();
+        resultContainer.innerHTML = '';
+        
+        // Создаем элементы через DOM API
+        const errorWrapper = document.createElement('div');
+        errorWrapper.style.cssText = 'text-align: center; padding: 20px; color: #d93025;';
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = 'font-size: 14px; margin-bottom: 15px;';
+        messageDiv.textContent = message; // Безопасно - экранирует HTML
+        
+        const retryBtn = document.createElement('button');
+        retryBtn.id = 'retryBtn';
+        retryBtn.className = 'action-btn retry-btn';
+        retryBtn.textContent = 'Try Again';
+        
+        errorWrapper.appendChild(messageDiv);
+        errorWrapper.appendChild(retryBtn);
+        resultContainer.appendChild(errorWrapper);
+        
         resultContainer.style.display = 'block';
         generateBtn.style.display = 'none';
         
@@ -122,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 10);
 
         // Обработчик кнопки повтора
-        document.getElementById('retryBtn').addEventListener('click', function() {
+        retryBtn.addEventListener('click', function() {
             hideResult();
         });
     }
@@ -163,28 +186,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Показать диалог с инструкциями по разрешениям
     function showPermissionsDialog() {
-        const permissionsHtml = `
-            <div class="permissions-dialog">
-                <div class="permissions-header">
-                    <svg width="20" height="20" style="color: #1a73e8; margin-right: 6px;" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Setup Permissions
-                </div>
-                <div class="permissions-text">
-                    <p><b>Step 1:</b> Click "Open Google Meet" below</p>
-                    <p><b>Step 2:</b> Allow camera and microphone access</p>
-                    <p><b>Step 3:</b> Return here and click "Create Link"</p>
-                    <p style="font-size: 11px; color: #666; margin-top: 8px;">💡 Only needed once</p>
-                </div>
-                <div class="permissions-actions">
-                    <button id="openMeetBtn" class="action-btn open-meet-btn">Open Google Meet</button>
-                    <button id="createLinkBtn" class="action-btn retry-btn">Create Link</button>
-                </div>
-            </div>
-        `;
+        // Очищаем контейнер и старые обработчики безопасно
+        cleanupEventListeners();
+        resultContainer.innerHTML = '';
         
-        resultContainer.innerHTML = permissionsHtml;
+        // Создаем основной контейнер диалога
+        const permissionsDialog = document.createElement('div');
+        permissionsDialog.className = 'permissions-dialog';
+        
+        // Создаем заголовок
+        const header = document.createElement('div');
+        header.className = 'permissions-header';
+        
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('width', '20');
+        icon.setAttribute('height', '20');
+        icon.style.cssText = 'color: #1a73e8; margin-right: 6px;';
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'currentColor');
+        
+        const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        iconPath.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z');
+        icon.appendChild(iconPath);
+        
+        const headerText = document.createElement('span');
+        headerText.textContent = 'Setup Permissions';
+        
+        header.appendChild(icon);
+        header.appendChild(headerText);
+        
+        // Создаем текст с инструкциями
+        const textDiv = document.createElement('div');
+        textDiv.className = 'permissions-text';
+        
+        const steps = [
+            { step: 'Step 1:', text: ' Click "Open Google Meet" below' },
+            { step: 'Step 2:', text: ' Allow camera and microphone access' },
+            { step: 'Step 3:', text: ' Return here and click "Create Link"' }
+        ];
+        
+        steps.forEach(item => {
+            const p = document.createElement('p');
+            const bold = document.createElement('b');
+            bold.textContent = item.step;
+            p.appendChild(bold);
+            p.appendChild(document.createTextNode(item.text));
+            textDiv.appendChild(p);
+        });
+        
+        const hintP = document.createElement('p');
+        hintP.style.cssText = 'font-size: 11px; color: #666; margin-top: 8px;';
+        hintP.textContent = '💡 Only needed once';
+        textDiv.appendChild(hintP);
+        
+        // Создаем кнопки
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'permissions-actions';
+        
+        const openMeetBtn = document.createElement('button');
+        openMeetBtn.id = 'openMeetBtn';
+        openMeetBtn.className = 'action-btn open-meet-btn';
+        openMeetBtn.textContent = 'Open Google Meet';
+        
+        const createLinkBtn = document.createElement('button');
+        createLinkBtn.id = 'createLinkBtn';
+        createLinkBtn.className = 'action-btn retry-btn';
+        createLinkBtn.textContent = 'Create Link';
+        
+        actionsDiv.appendChild(openMeetBtn);
+        actionsDiv.appendChild(createLinkBtn);
+        
+        // Собираем диалог
+        permissionsDialog.appendChild(header);
+        permissionsDialog.appendChild(textDiv);
+        permissionsDialog.appendChild(actionsDiv);
+        resultContainer.appendChild(permissionsDialog);
+        
         resultContainer.style.display = 'block';
         generateBtn.style.display = 'none';
         
@@ -197,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 10);
 
         // Обработчик кнопки "Open Google Meet"
-        document.getElementById('openMeetBtn').addEventListener('click', function() {
+        openMeetBtn.addEventListener('click', function() {
             chrome.tabs.create({ url: 'https://meet.google.com/new', active: true });
             this.textContent = '✓ Tab opened';
             this.style.background = '#34A853';
@@ -205,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Обработчик кнопки "Создать ссылку"
-        document.getElementById('createLinkBtn').addEventListener('click', function() {
+        createLinkBtn.addEventListener('click', function() {
             // Показываем статус загрузки
             this.classList.add('loading');
             this.disabled = true;
