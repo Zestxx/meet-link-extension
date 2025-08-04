@@ -4,7 +4,6 @@
   "version": "0.7.0",
   "description": "Fast meet link generator",
   "permissions": [
-    "activeTab",
     "tabs",
     "cookies"
   ],
