@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Meet Link",
   "version": "0.7.0",
-  "description": "Fast meet link generator",
+  "description": "Meet Link is a simple way to create Google Meet links for your meetings without having to open a meeting in a new tab.",
   "permissions": [
     "tabs",
     "cookies"
